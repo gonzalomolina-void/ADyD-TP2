@@ -1,0 +1,97 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty members
+
+abstract class Usuario {
+  - nombre: String
+  - email: String
+  - contrasena: String
+  + iniciarSesion(): void
+  + enviarMensaje(receptor: Usuario, texto: String): void
+  + dejarCalificacion(reserva: Reserva, evaluado: Usuario, puntaje: Integer, resena: String): void
+}
+
+class Propietario {
+  - condicionesAlquiler: String
+  - preferenciasPersonales: String
+  - reputacion: Float
+  + registrarVehiculo(): void
+  + evaluarSolicitud(solicitud: SolicitudAlquiler): void
+  + aprobarSolicitud(solicitud: SolicitudAlquiler): void
+  + rechazarSolicitud(solicitud: SolicitudAlquiler): void
+}
+
+class Inquilino {
+  - historialConduccion: String
+  - preferenciasAlquiler: String
+  - reputacion: Float
+  + buscarVehiculos(criterios: String): List<Vehiculo>
+  + crearSolicitud(vehiculo: Vehiculo, fechas: Date[], proposito: String): void
+  + realizarPago(reserva: Reserva): void
+}
+
+class Vehiculo {
+  - patente: String
+  - fotos: List<Image>
+  - descripcion: String
+  - tarifaDiaria: Float
+  - disponibilidad: Boolean
+  + actualizarDisponibilidad(): void
+  + bloquearFechas(fechaInicio: Date, fechaFin: Date): void
+}
+
+class SolicitudAlquiler {
+  - fechaInicio: Date
+  - fechaFin: Date
+  - proposito: String
+  - requisitosEspeciales: String
+  - estado: EstadoSolicitud
+  + actualizarEstado(nuevoEstado: EstadoSolicitud): void
+}
+
+class Reserva {
+  - fechaConfirmacion: Date
+  - estado: EstadoReserva
+  + procesarCobro(): void
+}
+
+class Pago {
+  - monto: Float
+  - fechaPago: Date
+  - plataforma: String
+  - estado: EstadoPago
+  + verificarPago(): Boolean
+}
+
+class Mensaje {
+  - contenido: String
+  - fechaHora: DateTime
+  + leer(): void
+}
+
+class Calificacion {
+  - puntaje: Integer
+  - resena: String
+  - fecha: Date
+}
+
+Usuario <|-- Propietario
+Usuario <|-- Inquilino
+
+Propietario "1" -- "1..*" Vehiculo : Registra/Posee >
+Inquilino "1" -- "0..*" SolicitudAlquiler : Crea >
+Vehiculo "1" -- "0..*" SolicitudAlquiler : Recibe <
+Propietario "1" -- "0..*" SolicitudAlquiler : Evalúa >
+
+SolicitudAlquiler "1" -- "0..1" Reserva : Genera >
+Reserva "0..*" -- "1" Vehiculo : Bloquea >
+Reserva "1" -- "1" Pago : Requiere >
+
+Usuario "1" -- "0..*" Mensaje : Envía >
+Usuario "1" -- "0..*" Mensaje : Recibe >
+
+Reserva "1" -- "0..2" Calificacion : Genera >
+Usuario "1" -- "0..*" Calificacion : Escribe >
+Usuario "1" -- "0..*" Calificacion : Es evaluado >
+
+@enduml
