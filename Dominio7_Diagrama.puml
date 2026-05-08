@@ -1,4 +1,4 @@
-@startuml
+@startuml TP2_Dominio_7
 skinparam classAttributeIconSize 0
 hide empty members
 
